@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DevelopersModule } from './developers/developers.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Employee } from './entities/employee.entity';
+import { ContactInfo } from './entities/contact-info.entity';
+import { Task } from './entities/task.entity';
+import { Meeting } from './entities/meeting.entity';
 
 @Module({
   imports: [
@@ -11,10 +13,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       database: 'db.sqlite',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
+      logging: true,
     }),
-    DevelopersModule,
+    TypeOrmModule.forFeature([Employee, ContactInfo, Task, Meeting]),
   ],
-  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
