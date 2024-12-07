@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Employee } from './entities/employee.entity';
-import { ContactInfo } from './entities/contact-info.entity';
 import { Task } from './entities/task.entity';
 import { Meeting } from './entities/meeting.entity';
+import { EmployeesModule } from './employees/employees.module';
 
 @Module({
   imports: [
@@ -15,7 +14,8 @@ import { Meeting } from './entities/meeting.entity';
       synchronize: true,
       logging: true,
     }),
-    TypeOrmModule.forFeature([Employee, ContactInfo, Task, Meeting]),
+    TypeOrmModule.forFeature([Task, Meeting]),
+    EmployeesModule,
   ],
   providers: [AppService],
 })

@@ -1,0 +1,30 @@
+import { DataSource } from 'typeorm';
+import { UpdateEmployeeCommand } from './update-employee.command';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { Employee } from 'src/employees/entities/employee.entity';
+
+@CommandHandler(UpdateEmployeeCommand)
+export class UpdateEmployeeHandler
+  implements ICommandHandler<UpdateEmployeeCommand, number>
+{
+  constructor(
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
+  ) {}
+
+  async execute(command: UpdateEmployeeCommand): Promise<number> {
+    return await this.dataSource.transaction(async (db) => {
+      const employee = await db.findOne(Employee, {
+        where: { id: command.id },
+        relations: ['contactInfo'],
+      });
+
+      if (!employee) return 0;
+
+      db.merge(Employee, employee, command);
+      await db.save(employee);
+      return 1;
+    });
+  }
+}
