@@ -6,10 +6,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CqrsModule } from '@nestjs/cqrs';
 import { QueryHandlers } from './queries';
 import { CommandsHandlers } from './commands';
+import { EventHandlers } from './events';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
-  imports: [CqrsModule, TypeOrmModule.forFeature([ContactInfo, Employee])],
+  imports: [
+    CqrsModule,
+    TypeOrmModule.forFeature([ContactInfo, Employee]),
+    CommonModule,
+  ],
   controllers: [EmployeesController],
-  providers: [...QueryHandlers, ...CommandsHandlers],
+  providers: [...QueryHandlers, ...CommandsHandlers, ...EventHandlers],
 })
 export class EmployeesModule {}

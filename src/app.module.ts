@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
 import { Meeting } from './entities/meeting.entity';
 import { EmployeesModule } from './employees/employees.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [

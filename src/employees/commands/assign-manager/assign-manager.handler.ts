@@ -1,8 +1,9 @@
 import { DataSource } from 'typeorm';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { AssignManagerCommand } from './assign-manager.command';
+import { EntityEventsDispatcher } from 'src/common/events/entity-events-dispatcher';
 
 @CommandHandler(AssignManagerCommand)
 export class AssignManagerHandler
@@ -11,6 +12,7 @@ export class AssignManagerHandler
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
+    private readonly eventDispatcher: EntityEventsDispatcher,
   ) {}
 
   async execute(command: AssignManagerCommand): Promise<number> {
@@ -21,8 +23,11 @@ export class AssignManagerHandler
 
       if (!employee) return 0;
 
-      db.merge(Employee, employee, command);
+      employee.managerId = command.managerId ?? null;
       await db.save(employee);
+
+      await this.eventDispatcher.dispatch(employee);
+
       return 1;
     });
   }
